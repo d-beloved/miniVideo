@@ -1,11 +1,18 @@
 import React, { Component } from "react";
-import { View, Text, TouchableOpacity, Image, Share, Clipboard } from "react-native";
-import * as MediaLibrary from "expo-media-library";
-import * as Permissions from 'expo-permissions';
-import { Camera } from 'expo-camera';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  Share,
+  Clipboard,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
+import * as Permissions from "expo-permissions";
+import { Camera } from "expo-camera";
 import * as firebase from "firebase";
 import uuid from "uuid";
-
 
 const firebaseConfig = {
   apiKey: "AIzaSyBxeBLfG8bFfyg5wwft0stNdEMRM6OPjBo",
@@ -23,7 +30,7 @@ if (!firebase.apps.length) {
 }
 
 // Firebase sets some timers for a long period, which will trigger some warnings. Let's turn that off for this example
-console.disableYellowBox = true;
+// console.disableYellowBox = true;
 
 class MyCam extends Component {
   state = {
@@ -31,14 +38,6 @@ class MyCam extends Component {
     recording: false,
     uploading: false,
   };
-
-  // _saveVideo = async () => {
-  //   const { video } = this.state;
-  //   const asset = await MediaLibrary.createAssetAsync(video.uri);
-  //   if (asset) {
-  //     this.setState({ video: null });
-  //   }
-  // };
 
   _StopRecord = async () => {
     this.setState({ recording: false }, () => {
@@ -49,7 +48,7 @@ class MyCam extends Component {
   _StartRecord = async () => {
     if (this.cam) {
       this.setState({ recording: true }, async () => {
-        const video = await this.cam.recordAsync({ maxDuration: 15 });
+        const video = await this.cam.recordAsync({ maxDuration: 15, quality: '480p' });
         // this.setState({ video });
         this._StopRecord();
         this._handleRecordedVideo(video);
@@ -73,6 +72,7 @@ class MyCam extends Component {
 
       if (!pickerResult.cancelled) {
         uploadUrl = await uploadVideoAsync(pickerResult.uri);
+        // console.log('I got here too', uploadUrl);
         this.setState({ video: uploadUrl });
       }
     } catch (e) {
@@ -90,12 +90,13 @@ class MyCam extends Component {
           style={[
             StyleSheet.absoluteFill,
             {
-              backgroundColor: "rgba(0,0,0,0.4)",
+              backgroundColor: "rgba(0,0,0,0.4) cover",
               alignItems: "center",
               justifyContent: "center",
             },
           ]}
         >
+          <Text style={{ fontWeight: "bold", color: "white", marginBottom: 10 }}>Uploading your video</Text>
           <ActivityIndicator color="#fff" animating size="large" />
         </View>
       );
@@ -112,24 +113,32 @@ class MyCam extends Component {
       <View
         style={{
           marginTop: 30,
-          width: 250,
+          width: 300,
           borderRadius: 3,
+          backgroundColor: "white",
           elevation: 2,
         }}
       >
-        <View
+        <Text
           style={{
-            borderTopRightRadius: 3,
-            borderTopLeftRadius: 3,
-            shadowColor: "rgba(0,0,0,1)",
-            shadowOpacity: 0.2,
-            shadowOffset: { width: 4, height: 4 },
-            shadowRadius: 5,
-            overflow: "hidden",
+            textAlign: "center",
+            padding: 15,
+            marginBottom: 5,
+            backgroundColor: "#4fef97",
           }}
         >
-          <Image source={{ uri: video }} style={{ width: 250, height: 250 }} />
-        </View>
+          Tap the link below to copy to clipboard
+        </Text>
+        <Text
+          style={{
+            textAlign: "center",
+            padding: 15,
+            marginBottom: 5,
+            backgroundColor: "#4fef97",
+          }}
+        >
+          Long press the link below to share
+        </Text>
         <Text
           onPress={this._copyToClipboard}
           onLongPress={this._share}
@@ -155,43 +164,33 @@ class MyCam extends Component {
   };
 
   render() {
-    const { recording } = this.state;
+    const { recording, uploading } = this.state;
     return (
       <Camera
-        ref={cam => (this.cam = cam)}
+        ref={(cam) => (this.cam = cam)}
         style={{
           justifyContent: "flex-end",
           alignItems: "center",
           flex: 1,
-          width: "100%"
+          width: "100%",
         }}
       >
-        {/* {video && (
+        {uploading ? null : (
           <TouchableOpacity
-            onPress={this._saveVideo}
+            onPress={this.toogleRecord}
             style={{
               padding: 20,
               width: "100%",
-              backgroundColor: "#fff"
+              backgroundColor: recording ? "#ef4f84" : "#4fef97",
             }}
           >
-            <Text style={{ textAlign: "center" }}>Upload recording</Text>
+            <Text style={{ textAlign: "center" }}>
+              {recording ? "Stop" : "Record"}
+            </Text>
           </TouchableOpacity>
-        )} */}
-        <TouchableOpacity
-          onPress={this.toogleRecord}
-          style={{
-            padding: 20,
-            width: "100%",
-            backgroundColor: recording ? "#ef4f84" : "#4fef97"
-          }}
-        >
-          <Text style={{ textAlign: "center" }}>
-            {recording ? "Stop" : "Record"}
-          </Text>
-        </TouchableOpacity>
-        {this._maybeRenderVideo()}
+        )}
         {this._renderUploadingOverlay()}
+        {this._maybeRenderVideo()}
       </Camera>
     );
   }
@@ -200,7 +199,6 @@ class MyCam extends Component {
 export default class RecVideo extends Component {
   state = {
     showCamera: false,
-    audioRecord: false,
   };
 
   _showCamera = async () => {
@@ -230,7 +228,10 @@ export default class RecVideo extends Component {
             onPress={this._showCamera}
             style={{ backgroundColor: "red", padding: 15, borderRadius: 50 }}
           >
-            <Text style={{ fontSize:18, fontWeight: 'bold', color: 'white' }}> Record video (max 15secs) </Text>
+            <Text style={{ fontSize: 18, fontWeight: "bold", color: "white" }}>
+              {" "}
+              Record video (max 15secs){" "}
+            </Text>
           </TouchableOpacity>
         )}
       </View>
@@ -257,9 +258,11 @@ async function uploadVideoAsync(uri) {
 
   const ref = firebase.storage().ref().child(uuid.v4());
   const snapshot = await ref.put(blob);
+  // console.log('I got here', snapshot);
+  const uploadedVideo = await snapshot.ref.getDownloadURL();
 
   // We're done with the blob, close and release it
   blob.close();
 
-  return await snapshot.ref.getDownloadURL();
+  return uploadedVideo;
 }
