@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "miniVideo",
+    "icon": "icon.png",
+    "version": "1.0.0",
+    "android": {
+      "package": "com.davecorn.miniVideo",
+      "versionCode": 1
+    }
+  }
+}

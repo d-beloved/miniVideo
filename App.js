@@ -49,7 +49,6 @@ class MyCam extends Component {
     if (this.cam) {
       this.setState({ recording: true }, async () => {
         const video = await this.cam.recordAsync({ maxDuration: 15, quality: '480p' });
-        // this.setState({ video });
         this._StopRecord();
         this._handleRecordedVideo(video);
       });
