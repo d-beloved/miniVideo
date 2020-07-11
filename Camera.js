@@ -13,14 +13,14 @@ import * as firebase from "firebase";
 import uuid from "uuid";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBxeBLfG8bFfyg5wwft0stNdEMRM6OPjBo",
-  authDomain: "videoupload-f4879.firebaseapp.com",
-  databaseURL: "https://videoupload-f4879.firebaseio.com",
-  projectId: "videoupload-f4879",
-  storageBucket: "videoupload-f4879.appspot.com",
-  messagingSenderId: "659565983703",
-  appId: "1:659565983703:web:7376471096873bb1a07d92",
-  measurementId: "G-J8SSTPW9KS",
+  apiKey: "your api-Key",
+  authDomain: "your domain",
+  databaseURL: "your url",
+  projectId: "project Id",
+  storageBucket: "bucket url",
+  messagingSenderId: "your sender id",
+  appId: "your_app_id",
+  measurementId: "measurement id",
 };
 
 if (!firebase.apps.length) {

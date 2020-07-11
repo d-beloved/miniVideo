@@ -1,22 +1,20 @@
-# Firebase Storage Upload Example
+# MiniVideo Android App
 
 <p>
-  <!-- iOS -->
-  <img alt="Supports Expo iOS" longdesc="Supports Expo iOS" src="https://img.shields.io/badge/iOS-4630EB.svg?style=flat-square&logo=APPLE&labelColor=999999&logoColor=fff" />
   <!-- Android -->
   <img alt="Supports Expo Android" longdesc="Supports Expo Android" src="https://img.shields.io/badge/Android-4630EB.svg?style=flat-square&logo=ANDROID&labelColor=A4C639&logoColor=fff" />
 </p>
 
-This example demonstrates how you can upload images (and other files) to Firebase Storage. Read App.js for more info, in particular the `uploadImageAsync` function.
+This simple app allows you to record and upload a video to Firebase Storage.
 
 ## 🚀 How to use
 
 - Run `yarn` or `npm install`
 - Run [`expo start`](https://docs.expo.io/versions/latest/workflow/expo-cli/), try it out.
-- Take a new picture or upload one from your library
-- See the image being rendered from Firebase
+- Record a video, maximum of 15 secs.
+- The video is uploaded automatically to your configured storage and your link is displayed for sharing
 
 ## 📝 Notes
 
-- [Firebase Storage API](https://firebase.google.com/docs/storage/web/upload-files)
-- [Expo Firebase guide](https://docs.expo.io/versions/latest/guides/using-firebase/)
+- Check here for setting up your [Firebase Storage API](https://firebase.google.com/docs/storage/web/upload-files)
+- Look into this document for more guides [Expo Firebase guide](https://docs.expo.io/versions/latest/guides/using-firebase/)
